@@ -13,75 +13,76 @@
 </head>
 
 <body>
-    <h3 id="place"></h3>
-    <div id="now">
-        <div id="weather">
+    <div class="background">
+        <h3 id="place"></h3>
+        <div id="now">
+            <div id="weather">
+            </div>
         </div>
-    </div>
-    <table id="forecast">
-    </table>
+        <table id="forecast">
+        </table>
 
-    <script>
-        //geolocation
-        function success(pos) {
-            ajaxRequest(pos.coords.latitude, pos.coords.longitude);
-        }
+        <script>
+            //geolocation
+            function success(pos) {
+                ajaxRequest(pos.coords.latitude, pos.coords.longitude);
+            }
 
-        function fail(error) {
-            alert('位置情報の取得に失敗しました。エラーコード:' + error.code);
-        }
+            function fail(error) {
+                alert('位置情報の取得に失敗しました。エラーコード:' + error.code);
+            }
 
-        navigator.geolocation.getCurrentPosition(success, fail);
+            navigator.geolocation.getCurrentPosition(success, fail);
 
-        //UTCをミリ秒に
-        function utcToJSTime(utcTime) {
-            return utcTime * 1000;
-        }
+            //UTCをミリ秒に
+            function utcToJSTime(utcTime) {
+                return utcTime * 1000;
+            }
 
-        //データ取得
-        function ajaxRequest(lat, long) {
-            const url = 'https://api.openweathermap.org/data/2.5/forecast';
-            //appIdにはOpenWeatherMapで取得したkeyを入力
-            //事前のユーザ登録が必要（無料）
-            const appId = '676cdb7b8748ded4aff85952d1189dbd';
+            //データ取得
+            function ajaxRequest(lat, long) {
+                const url = 'https://api.openweathermap.org/data/2.5/forecast';
+                //appIdにはOpenWeatherMapで取得したkeyを入力
+                //事前のユーザ登録が必要（無料）
+                const appId = '676cdb7b8748ded4aff85952d1189dbd';
 
-            $.ajax({
-                url: url,
-                data: {
-                    appid: appId,
-                    lat: lat,
-                    lon: long,
-                    units: 'metric',
-                    lang: 'ja'
-                }
-            })
-                .done(function (data) {
-                    // console.log(data);
+                $.ajax({
+                    url: url,
+                    data: {
+                        appid: appId,
+                        lat: lat,
+                        lon: long,
+                        units: 'metric',
+                        lang: 'ja'
+                    }
+                })
+                    .done(function (data) {
+                        // console.log(data);
 
-                    //都市名、国名
-                    $('#place').text(data.city.name + ', ' + data.city.country);
+                        //都市名、国名
+                        $('#place').text(data.city.name + ', ' + data.city.country);
 
-                    //天気予報データ
-                    data.list.forEach(function (forecast, index) {
-                        const dateTime = new Date(utcToJSTime(forecast.dt));
-                        const month = dateTime.getMonth() + 1;
-                        const date = dateTime.getDate();
-                        const hours = dateTime.getHours();
-                        const min = String(dateTime.getMinutes()).padStart(2, '0');
-                        const temperature = Math.round(forecast.main.temp);//気温の計算
-                        const hum = Math.round(forecast.main.humidity);//湿度の計算
-                        // console.log(hum);
-                        const description = forecast.weather[0].description;
-                        //不快指数の計算
-                        //不快指数=0.81*気温+0.01*湿度＊（0.99*湿度-14.3）+46.3
-                        const temperatureHumidityIndex = Math.round((0.81 * temperature) + (0.01 * hum) * (0.99 * hum - 14.3) + 46.3);//不快指数、THIと略されることもある
-                        // console.log(temperatureHumidityIndex);
-                        //アイコン取得
-                        const icon = forecast.weather[0].icon;
-                        console.log(icon);
-                        //現在の天気とそれ以外で出力を変える
-                        if (index === 0) {
-                            const currentWeather = `
+                        //天気予報データ
+                        data.list.forEach(function (forecast, index) {
+                            const dateTime = new Date(utcToJSTime(forecast.dt));
+                            const month = dateTime.getMonth() + 1;
+                            const date = dateTime.getDate();
+                            const hours = dateTime.getHours();
+                            const min = String(dateTime.getMinutes()).padStart(2, '0');
+                            const temperature = Math.round(forecast.main.temp);//気温の計算
+                            const hum = Math.round(forecast.main.humidity);//湿度の計算
+                            // console.log(hum);
+                            const description = forecast.weather[0].description;
+                            //不快指数の計算
+                            //不快指数=0.81*気温+0.01*湿度＊（0.99*湿度-14.3）+46.3
+                            const temperatureHumidityIndex = Math.round((0.81 * temperature) + (0.01 * hum) * (0.99 * hum - 14.3) + 46.3);//不快指数、THIと略されることもある
+                            // console.log(temperatureHumidityIndex);
+                            //アイコン取得
+                            const icon = forecast.weather[0].icon;
+                            console.log(icon);
+                            //現在の天気とそれ以外で出力を変える
+                            if (index === 0) {
+                                const currentWeather = `
 <div class="info">
     <p>
         <span class="description">現在の天気:${description}</span>
@@ -89,28 +90,28 @@
         <span class="temp">${temperatureHumidityIndex}</span>
     </p>
 </div>`;
-                            $('#weather').html(currentWeather);
-                        } else {
-                            const tableRow = `
+                                $('#weather').html(currentWeather);
+                            } else {
+                                const tableRow = `
 <tr>
     <td class="info">
         ${month}/${date} ${hours}:${min}
     </td>
-    <td><img src="https://openweathermap.org/img/w/" + ${icon} + ".png"></td>
+    <td><img src="https://openweathermap.org/img/w/${icon}.png"></td>
     <td><span class="description">${description}</span></td>
     <td><span class="temp">${temperature}℃</span></td>
     <td><span class="temp">${temperatureHumidityIndex}</span></td>
 </tr>`;
-                            $('#forecast').append(tableRow);
-                        }
+                                $('#forecast').append(tableRow);
+                            }
+                        })
                     })
-                })
-                .fail(function () {
-                    console.log('$ajax failed!');
-                })
-        }
-    </script>
-
+                    .fail(function () {
+                        console.log('$ajax failed!');
+                    })
+            }
+        </script>
+    </div>
 </body>
 
 </html>
