@@ -1,0 +1,60 @@
+@charset "UTF-8";
+
+main .container {
+    margin: 0 auto;
+    max-width: 800px;
+}
+#place {
+    text-align: center;
+    color: white;
+}
+#now {
+    margin: 0 auto;
+    border: 1px solid white;
+    max-width: 400px;
+    min-height: 40px;
+    color: white;
+}
+#now .info p {
+    text-align: center;
+}
+#now .temp {
+    margin-left: 1rem;
+    padding-left: 24px;
+    background-size: 24px 24px;
+    color: white;
+}
+#forecast {
+    border-collapse: collapse;
+    margin: 2rem auto 0;
+    width: 400px;
+    color: white;
+}
+#forecast th, #forecast td {
+    border-top: 1px solid white;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+#forecast tr td:first-of-type {
+    border-left: 1px solid white;
+}
+#forecast tr td:last-of-type {
+    border-right: 1px solid white;
+    text-align: right;
+}
+#forecast tr:last-of-type {
+    border-bottom: 1px solid white;
+}
+#forecast .info p {
+    margin: 0;
+}
+#forecast .temp {
+    margin-left: 1rem;
+    padding-left: 24px;
+    background-size: 24px 24px;   
+}
+#forecast .humn {
+    margin-left: 1rem;
+    padding-left: 24px;
+    background-size: 24px 24px;   
+}
