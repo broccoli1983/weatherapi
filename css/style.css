@@ -2,7 +2,7 @@
 
 main .container {
     margin: 0 auto;
-    max-width: 800px;
+    max-width: 1000px;
 }
 #place {
     text-align: center;
@@ -11,7 +11,7 @@ main .container {
 #now {
     margin: 0 auto;
     border: 1px solid white;
-    max-width: 400px;
+    max-width: 500px;
     min-height: 40px;
     color: white;
 }
@@ -27,7 +27,7 @@ main .container {
 #forecast {
     border-collapse: collapse;
     margin: 2rem auto 0;
-    width: 400px;
+    width: 550px;
     color: white;
 }
 #forecast th, #forecast td {

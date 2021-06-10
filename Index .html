@@ -75,11 +75,29 @@
                             const description = forecast.weather[0].description;
                             //不快指数の計算
                             //不快指数=0.81*気温+0.01*湿度＊（0.99*湿度-14.3）+46.3
-                            const temperatureHumidityIndex = Math.round((0.81 * temperature) + (0.01 * hum) * (0.99 * hum - 14.3) + 46.3);//不快指数、THIと略されることもある
+                            const thi = Math.round((0.81 * temperature) + (0.01 * hum) * (0.99 * hum - 14.3) + 46.3);//不快指数、THIと略されることもある
                             // console.log(temperatureHumidityIndex);
                             //アイコン取得
                             const icon = forecast.weather[0].icon;
-                            console.log(icon);
+                            // console.log(icon);
+                            function puddingInt(thi) {
+                                if (0 <= thi && thi <= 60) {
+                                    return '🍺'
+                                } else if (61 <= thi && thi <= 70) {
+                                    return '🍺🍺'
+                                } else if (71 <= thi && thi <= 80) {
+                                    return '🍺🍺🍺'
+                                } else if (81 <= thi && thi <= 90) {
+                                    return '🍺🍺🍺🍺'
+                                } else if (91 <= thi) {
+                                    return '🍺🍺🍺🍺🍺'
+                                } else {
+                                    return '';
+                                }
+                            }
+                            // const puddingScore = puddingInt(thi);
+                            // console.log(puddingInt(thi));
+                            // console.log(pugddingScore);
                             //現在の天気とそれ以外で出力を変える
                             if (index === 0) {
                                 const currentWeather = `
@@ -87,7 +105,7 @@
     <p>
         <span class="description">現在の天気:${description}</span>
         <span class="temp">${temperature}</span>℃
-        <span class="temp">${temperatureHumidityIndex}</span>
+        <span class="temp">${puddingInt(thi)}</span>
     </p>
 </div>`;
                                 $('#weather').html(currentWeather);
@@ -100,7 +118,7 @@
     <td><img src="https://openweathermap.org/img/w/${icon}.png"></td>
     <td><span class="description">${description}</span></td>
     <td><span class="temp">${temperature}℃</span></td>
-    <td><span class="temp">${temperatureHumidityIndex}</span></td>
+    <td><span class="temp">${puddingInt(thi)}</span></td>
 </tr>`;
                                 $('#forecast').append(tableRow);
                             }
