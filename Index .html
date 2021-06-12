@@ -5,102 +5,124 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Standard Meta -->
+    <meta name="description" content="Download real-time images of Earth from the Himawari-8 satellite">
+    <meta name="keywords"
+        content="himawari, himawari-8, satellite, earth, js, javascript, download, real-time, code, fast, free">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Himawari.js">
+    <meta property="og:description" content="Download real-time images of Earth from the Himawari-8 satellite">
+    <meta property="og:type" content="video">
+    <meta property="og:image" content="http://i.imgur.com/kJcfCoN.jpg">
+    <!-- <meta property="og:video" content="http://jakiestfu.s3.amazonaws.com/earth-web.mp4">
+            <meta property="og:video:type" content="video/mp4">
+            <meta property="og:video:width" content="2200">
+            <meta property="og:video:height" content="2200"> -->
+    <meta property="og:url" content="http://jakiestfu.github.io/himawari.js/demo/">
+    <meta property="og:site_name" content="Himawari.js">
     <!-- Stylesheet -->
     <link rel="stylesheet" href="./css/style.css" type="text/css">
-    <link rel="stylesheet" href="./css/background.css" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <title>weatherapp</title>
 </head>
 
 <body>
-    <div class="background">
-        <h3 id="place"></h3>
-        <div id="now">
-            <div id="weather">
-            </div>
+
+    <div class="himawari">
+        <a href="https://github.com/jakiestfu/himawari.js" class="video-link">
+            <video autoplay loop src="http://jakiestfu.s3.amazonaws.com/earth-web.mp4"
+                poster="http://i.imgur.com/kJcfCoN.jpg"></video>
+        </a>
+    </div>
+    <div class="tenki"></div>
+    <h3 id="place"></h3>
+    <div id="now">
+        <div id="weather">
         </div>
-        <table id="forecast">
-        </table>
+    </div>
+    <table id="forecast">
+    </table>
 
-        <script>
-            //geolocation
-            function success(pos) {
-                ajaxRequest(pos.coords.latitude, pos.coords.longitude);
-            }
+    <script>
+        //geolocation
+        function success(pos) {
+            ajaxRequest(pos.coords.latitude, pos.coords.longitude);
+        }
 
-            function fail(error) {
-                alert('位置情報の取得に失敗しました。エラーコード:' + error.code);
-            }
+        function fail(error) {
+            alert('位置情報の取得に失敗しました。エラーコード:' + error.code);
+        }
 
-            navigator.geolocation.getCurrentPosition(success, fail);
+        navigator.geolocation.getCurrentPosition(success, fail);
 
-            //UTCをミリ秒に
-            function utcToJSTime(utcTime) {
-                return utcTime * 1000;
-            }
+        //UTCをミリ秒に
+        function utcToJSTime(utcTime) {
+            return utcTime * 1000;
+        }
 
-            //データ取得
-            function ajaxRequest(lat, long) {
-                const url = 'https://api.openweathermap.org/data/2.5/forecast';
-                //appIdにはOpenWeatherMapで取得したkeyを入力
-                //事前のユーザ登録が必要（無料）
-                const appId = '';
+        //データ取得
+        function ajaxRequest(lat, long) {
+            const url = 'https://api.openweathermap.org/data/2.5/forecast';
+            //appIdにはOpenWeatherMapで取得したkeyを入力
+            //事前のユーザ登録が必要（無料）
+            const appId = '676cdb7b8748ded4aff85952d1189dbd';
 
-                $.ajax({
-                    url: url,
-                    data: {
-                        appid: appId,
-                        lat: lat,
-                        lon: long,
-                        units: 'metric',
-                        lang: 'ja'
-                    }
-                })
-                    .done(function (data) {
-                        // console.log(data);
+            $.ajax({
+                url: url,
+                data: {
+                    appid: appId,
+                    lat: lat,
+                    lon: long,
+                    units: 'metric',
+                    lang: 'ja'
+                }
+            })
+                .done(function (data) {
+                    // console.log(data);
 
-                        //都市名、国名
-                        $('#place').text(data.city.name + ', ' + data.city.country);
+                    //都市名、国名
+                    $('#place').text(data.city.name + ', ' + data.city.country);
 
-                        //天気予報データ
-                        data.list.forEach(function (forecast, index) {
-                            const dateTime = new Date(utcToJSTime(forecast.dt));
-                            const month = dateTime.getMonth() + 1;
-                            const date = dateTime.getDate();
-                            const hours = dateTime.getHours();
-                            const min = String(dateTime.getMinutes()).padStart(2, '0');
-                            const temperature = Math.round(forecast.main.temp);//気温の計算
-                            const hum = Math.round(forecast.main.humidity);//湿度の計算
-                            // console.log(hum);
-                            const description = forecast.weather[0].description;
-                            //不快指数の計算
-                            //不快指数=0.81*気温+0.01*湿度＊（0.99*湿度-14.3）+46.3
-                            const thi = Math.round((0.81 * temperature) + (0.01 * hum) * (0.99 * hum - 14.3) + 46.3);//不快指数、THIと略されることもある
-                            // console.log(temperatureHumidityIndex);
-                            //アイコン取得
-                            const icon = forecast.weather[0].icon;
-                            // console.log(icon);
-                            function puddingInt(thi) {
-                                if (0 <= thi && thi <= 60) {
-                                    return '🍺'
-                                } else if (61 <= thi && thi <= 70) {
-                                    return '🍺🍺'
-                                } else if (71 <= thi && thi <= 80) {
-                                    return '🍺🍺🍺'
-                                } else if (81 <= thi && thi <= 90) {
-                                    return '🍺🍺🍺🍺'
-                                } else if (91 <= thi) {
-                                    return '🍺🍺🍺🍺🍺'
-                                } else {
-                                    return '';
-                                }
+                    //天気予報データ
+                    data.list.forEach(function (forecast, index) {
+                        const dateTime = new Date(utcToJSTime(forecast.dt));
+                        const month = dateTime.getMonth() + 1;
+                        const date = dateTime.getDate();
+                        const hours = dateTime.getHours();
+                        const min = String(dateTime.getMinutes()).padStart(2, '0');
+                        const temperature = Math.round(forecast.main.temp);//気温の計算
+                        const hum = Math.round(forecast.main.humidity);//湿度の計算
+                        // console.log(hum);
+                        const description = forecast.weather[0].description;
+                        //不快指数の計算
+                        //不快指数=0.81*気温+0.01*湿度＊（0.99*湿度-14.3）+46.3
+                        const thi = Math.round((0.81 * temperature) + (0.01 * hum) * (0.99 * hum - 14.3) + 46.3);//不快指数、THIと略されることもある
+                        console.log(thi);
+                        //アイコン取得
+                        const icon = forecast.weather[0].icon;
+                        // console.log(icon);
+                        function puddingInt(thi) {
+                            if (0 <= thi && thi <= 60) {
+                                return '🍺'
+                            } else if (61 <= thi && thi <= 70) {
+                                return '🍺🍺'
+                            } else if (71 <= thi && thi <= 80) {
+                                return '🍺🍺🍺'
+                            } else if (81 <= thi && thi <= 90) {
+                                return '🍺🍺🍺🍺'
+                            } else if (91 <= thi) {
+                                return '🍺🍺🍺🍺🍺'
+                            } else {
+                                return '';
                             }
-                            // const puddingScore = puddingInt(thi);
-                            // console.log(puddingInt(thi));
-                            // console.log(pugddingScore);
-                            //現在の天気とそれ以外で出力を変える
-                            if (index === 0) {
-                                const currentWeather = `
+                        }
+                        // const puddingScore = puddingInt(thi);
+                        // console.log(puddingInt(thi));
+                        // console.log(pugddingScore);
+                        //現在の天気とそれ以外で出力を変える
+                        if (index === 0) {
+                            const currentWeather = `
 <div class="info">
     <p>
         <span class="description">現在の天気:${description}</span>
@@ -108,9 +130,9 @@
         <span class="temp">${puddingInt(thi)}</span>
     </p>
 </div>`;
-                                $('#weather').html(currentWeather);
-                            } else {
-                                const tableRow = `
+                            $('#weather').html(currentWeather);
+                        } else {
+                            const tableRow = `
 <tr>
     <td class="info">
         ${month}/${date} ${hours}:${min}
@@ -120,15 +142,15 @@
     <td><span class="temp">${temperature}℃</span></td>
     <td><span class="temp">${puddingInt(thi)}</span></td>
 </tr>`;
-                                $('#forecast').append(tableRow);
-                            }
-                        })
+                            $('#forecast').append(tableRow);
+                        }
                     })
-                    .fail(function () {
-                        console.log('$ajax failed!');
-                    })
-            }
-        </script>
+                })
+                .fail(function () {
+                    console.log('$ajax failed!');
+                })
+        }
+    </script>
     </div>
 </body>
 

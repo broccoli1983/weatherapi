@@ -1,5 +1,16 @@
 @charset "UTF-8";
+.tenki{
+    position: absolute;
+    top: 0;
+    left: 0; 
+}
 
+.himawari{
+    position:absolute;
+top: 0;
+left: 0;
+z-index: -1;
+}
 main .container {
     margin: 0 auto;
     max-width: 1000px;
